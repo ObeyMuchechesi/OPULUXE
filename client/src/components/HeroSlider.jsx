@@ -47,7 +47,7 @@ export default function HeroSlider({ className = "", fill = false }) {
       }}
     >
       {/* Slides */}
-      <div className={`relative w-full ${fill ? "h-full" : "aspect-[4/5] sm:aspect-[3/3.4]"}`}>
+      <div className="relative h-full w-full aspect-[4/5] sm:aspect-[3/3.4]">
         {IMAGES.map((img, i) => (
           <img
             key={img.src}
@@ -56,8 +56,8 @@ export default function HeroSlider({ className = "", fill = false }) {
             sizes="(max-width: 640px) 90vw, 560px"
             alt={img.alt}
             loading={i === 0 ? "eager" : "lazy"}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
-              i === index ? "opacity-100" : "opacity-0"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out will-change-transform ${
+              i === index ? "animate-kenburns opacity-100" : "opacity-0"
             }`}
             draggable="false"
           />

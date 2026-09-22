@@ -32,9 +32,14 @@ export default {
           "0%": { opacity: 0, transform: "translateY(16px)" },
           "100%": { opacity: 1, transform: "translateY(0)" },
         },
+        kenburns: {
+          "0%": { transform: "scale(1) translate(0px, 0px)" },
+          "100%": { transform: "scale(1.14) translate(-1.5%, 1.5%)" },
+        },
       },
       animation: {
         fadeUp: "fadeUp .6s ease-out both",
+        kenburns: "kenburns 7s ease-out forwards",
       },
     },
   },

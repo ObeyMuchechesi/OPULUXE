@@ -42,28 +42,28 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-gold-500/10 blur-[130px]" />
 
-        <div className="relative mx-auto grid max-w-7xl items-stretch gap-14 max-lg:px-6 max-lg:py-20 lg:grid-cols-2 lg:gap-0 lg:py-0">
-          <div className="animate-fadeUp max-lg:pb-20 lg:py-24 lg:pl-6">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 max-lg:px-6 max-lg:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:py-20">
+          <div className="animate-fadeUp max-lg:pb-2 lg:pl-6">
             <span className="pill border border-gold-400/30 bg-gold-400/10 text-gold-300">
               Lusaka&apos;s Home of Crown Care
             </span>
 
-            <h1 className="mt-6 font-display text-4xl leading-[1.08] text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 font-display text-3xl leading-[1.1] text-white sm:text-5xl sm:leading-[1.08] lg:text-6xl">
               OPULUXE
               <span className="block text-gold-300">BEAUTY STUDIO</span>
             </h1>
 
-            <p className="mt-5 text-lg tracking-[0.12em] text-white/55">
+            <p className="mt-4 text-base tracking-[0.12em] text-white/55 sm:text-lg">
               YOUR BEAUTY ELEVATED
             </p>
 
-            <p className="mt-6 max-w-lg text-sm leading-relaxed text-white/50">
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/50">
               From flawless knotless braids to silky bone straight and bouncy Spanish curls — we
               transform your hair with precision, patience and premium care. Book your seat and let
               us elevate your look.
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link to="/book" className="btn-gold">
                 Book an Appointment
               </Link>
@@ -72,7 +72,7 @@ export default function Home() {
               </a>
             </div>
 
-            <div className="mt-12 flex flex-wrap gap-10">
+            <div className="mt-10 flex flex-wrap gap-6 sm:gap-10">
               <div>
                 <p className="font-display text-3xl text-gold-300">23+</p>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/40">Services</p>
@@ -88,9 +88,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* HERO SLIDESHOW — full-bleed right half on desktop */}
-          <div className="relative animate-fadeUp lg:min-h-[640px]">
-            <HeroSlider fill className="max-lg:rounded-3xl max-lg:border max-lg:border-white/10" />
+          {/* HERO SLIDESHOW — framed, slightly inset on desktop; fixed height on mobile */}
+          <div className="relative mx-auto w-full max-w-md animate-fadeUp sm:max-w-lg lg:h-[600px] lg:max-w-none">
+            <HeroSlider className="h-[340px] rounded-3xl border border-white/10 sm:h-[440px] lg:h-full" />
           </div>
         </div>
       </section>
