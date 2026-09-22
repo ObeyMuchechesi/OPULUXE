@@ -45,11 +45,17 @@ export default function Home() {
           <HeroSlider fill />
         </div>
 
-        {/* Readability scrim (left-heavy) */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/10" />
+        {/* Readability scrim: dark only behind the text, photo stays vivid right */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, #0B0A08 0%, rgba(11,10,8,0.9) 22%, rgba(11,10,8,0.45) 45%, rgba(11,10,8,0) 65%)",
+          }}
+        />
 
         <div className="pointer-events-none relative mx-auto w-full max-w-7xl px-6 py-24">
-          <div className="pointer-events-auto max-w-2xl animate-fadeUp">
+          <div className="pointer-events-auto max-w-xl animate-fadeUp [text-shadow:0_2px_24px_rgba(0,0,0,0.55)]">
             <span className="pill border border-gold-400/30 bg-gold-400/10 text-gold-300">
               Lusaka&apos;s Home of Crown Care
             </span>
