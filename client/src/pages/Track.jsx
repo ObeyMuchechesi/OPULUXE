@@ -4,8 +4,17 @@ import api from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { prettyDate, prettyTime, priceLabel, statusStyles } from "../utils";
+import { waLink } from "../whatsapp";
+import useSEO from "../useSEO";
 
 export default function Track() {
+  useSEO({
+    title: "Track Your Booking | OPULUXE BEAUTY STUDIO",
+    description:
+      "Check the status of your OPULUXE appointment with your booking reference — requested, confirmed or completed.",
+    path: "/track",
+  });
+
   const [reference, setReference] = useState("");
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState("");
@@ -79,7 +88,18 @@ export default function Track() {
               />
             </div>
 
-            <p className="mt-6 text-xs text-white/35">
+            <a
+              href={waLink(
+                `Hello OPULUXE! I'd like to ask about my booking ${booking.reference} (${booking.serviceName} on ${booking.date}).`
+              )}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 px-4 py-3 text-sm text-[#4be382] transition hover:bg-[#25D366]/20"
+            >
+              Ask about this booking on WhatsApp
+            </a>
+
+            <p className="mt-4 text-xs text-white/35">
               Need to change something? Call us on +260 97 000 0000.
             </p>
           </div>

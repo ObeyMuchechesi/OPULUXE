@@ -61,6 +61,9 @@ export default function Footer() {
       <div className="border-t border-white/10 px-6 py-6">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-white/35 sm:flex-row">
           <p>© {new Date().getFullYear()} OPULUXE BEAUTY STUDIO. All rights reserved.</p>
+          <Link to="/admin/login" className="transition hover:text-gold-300/70">
+            Studio Login
+          </Link>
           <p className="tracking-[0.25em] text-gold-400/70">YOUR BEAUTY ELEVATED</p>
         </div>
       </div>

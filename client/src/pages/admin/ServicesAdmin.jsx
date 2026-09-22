@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import api from "../../api";
+import useSEO from "../../useSEO";
 import { money } from "../../utils";
 
 const EMPTY = {
@@ -14,6 +15,7 @@ const EMPTY = {
 };
 
 export default function ServicesAdmin() {
+  useSEO({ title: "Services | OPULUXE Admin", noindex: true });
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null); // null | {mode, data}

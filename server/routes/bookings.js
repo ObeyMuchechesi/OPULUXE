@@ -165,12 +165,13 @@ router.get("/", protect, async (req, res) => {
 
     const term = (search || q || "").trim();
     if (term) {
-      const rx = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+      const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const rx = new RegExp(esc, "i");
       filter.$or = [
         { customerName: rx },
         { phone: rx },
         { email: rx },
-        { reference: term.toUpperCase() },
+        { reference: new RegExp(`^${esc}`, "i") }, // prefix match so "OBS" / "OBS-5" find refs
         { serviceName: rx },
       ];
     }

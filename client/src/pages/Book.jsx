@@ -4,8 +4,17 @@ import api from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { priceLabel, prettyDate, prettyTime, todayStr, durationLabel } from "../utils";
+import { waLink, bookingMsg } from "../whatsapp";
+import useSEO from "../useSEO";
 
 export default function Book() {
+  useSEO({
+    title: "Book an Appointment | OPULUXE BEAUTY STUDIO",
+    description:
+      "Reserve your seat online — pick your service, date and time slot. Instant confirmation by reference, WhatsApp updates available.",
+    path: "/book",
+  });
+
   const [params] = useSearchParams();
 
   const [services, setServices] = useState([]);
@@ -129,6 +138,18 @@ export default function Book() {
               />
               <Row label="Status" value="Pending confirmation" />
             </div>
+
+            <a
+              href={done ? waLink(bookingMsg(done)) : "#"}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-gold w-full !bg-[#25D366] !text-ink hover:!bg-[#1fb857]"
+            >
+              Send via WhatsApp — Get Instant Confirmation
+            </a>
+            <p className="mt-2 text-center text-xs text-white/35">
+              Opens WhatsApp with your booking details pre-filled. Fastest way to reach the studio.
+            </p>
 
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link to="/" className="btn-ghost">

@@ -9,10 +9,12 @@ import {
   todayStr,
   durationLabel,
 } from "../../utils";
+import useSEO from "../../useSEO";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 
 export default function Dashboard() {
+  useSEO({ title: "Dashboard | OPULUXE Admin", noindex: true });
   const [stats, setStats] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api";
+import useSEO from "../../useSEO";
 
 export default function Login() {
+  useSEO({
+    title: "Studio Login | OPULUXE Admin",
+    noindex: true,
+  });
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

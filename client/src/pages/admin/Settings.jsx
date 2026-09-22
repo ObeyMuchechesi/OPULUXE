@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
+import useSEO from "../../useSEO";
 
 export default function Settings() {
+  useSEO({ title: "Settings | OPULUXE Admin", noindex: true });
   const [admin, setAdmin] = useState(null);
   const [form, setForm] = useState({ currentPassword: "", newPassword: "", confirm: "" });
   const [msg, setMsg] = useState({ type: "", text: "" });

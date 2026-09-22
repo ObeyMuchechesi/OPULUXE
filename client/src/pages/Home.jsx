@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import HeroSlider from "../components/HeroSlider";
 import Gallery from "../components/Gallery";
 import { priceLabel, durationLabel } from "../utils";
+import useSEO from "../useSEO";
 
 const HIGHLIGHTS = [
   { title: "Expert Stylists", text: "Years of hands-on braiding & hair care experience." },
@@ -15,6 +16,13 @@ const HIGHLIGHTS = [
 ];
 
 export default function Home() {
+  useSEO({
+    title: "OPULUXE BEAUTY STUDIO — Your Beauty Elevated | Braids & Styling in Lusaka",
+    description:
+      "Lusaka's home of crown care. Book knotless braids, twists, cornrows, silk press and hair treatments online. Open Mon–Sat, 07:00–20:00.",
+    path: "/",
+  });
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
