@@ -12,7 +12,7 @@ const IMAGES = Array.from({ length: 12 }, (_, i) => {
 
 const DURATION = 5000;
 
-export default function HeroSlider({ className = "" }) {
+export default function HeroSlider({ className = "", fill = false }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStart = useRef(null);
@@ -29,7 +29,9 @@ export default function HeroSlider({ className = "" }) {
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-3xl border border-white/10 shadow-soft ${className}`}
+      className={`group relative overflow-hidden shadow-soft ${
+        fill ? "h-full w-full border-0" : "rounded-3xl border border-white/10"
+      } ${className}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={(e) => {
@@ -45,7 +47,7 @@ export default function HeroSlider({ className = "" }) {
       }}
     >
       {/* Slides */}
-      <div className="relative aspect-[4/5] w-full sm:aspect-[3/3.4]">
+      <div className={`relative w-full ${fill ? "h-full" : "aspect-[4/5] sm:aspect-[3/3.4]"}`}>
         {IMAGES.map((img, i) => (
           <img
             key={img.src}

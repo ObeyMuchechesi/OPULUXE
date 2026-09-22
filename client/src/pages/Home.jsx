@@ -41,10 +41,9 @@ export default function Home() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-gold-500/10 blur-[130px]" />
-        <div className="pointer-events-none absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-fuchsia-600/10 blur-[140px]" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 md:py-28 lg:grid-cols-2">
-          <div className="animate-fadeUp">
+        <div className="relative mx-auto grid max-w-7xl items-stretch gap-14 max-lg:px-6 max-lg:py-20 lg:grid-cols-2 lg:gap-0 lg:py-0">
+          <div className="animate-fadeUp max-lg:pb-20 lg:py-24 lg:pl-6">
             <span className="pill border border-gold-400/30 bg-gold-400/10 text-gold-300">
               Lusaka&apos;s Home of Crown Care
             </span>
@@ -89,9 +88,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* HERO SLIDESHOW */}
-          <div className="relative animate-fadeUp">
-            <HeroSlider />
+          {/* HERO SLIDESHOW — full-bleed right half on desktop */}
+          <div className="relative animate-fadeUp lg:min-h-[640px]">
+            <HeroSlider fill className="max-lg:rounded-3xl max-lg:border max-lg:border-white/10" />
           </div>
         </div>
       </section>
