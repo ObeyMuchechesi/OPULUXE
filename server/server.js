@@ -29,11 +29,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Server error" });
 });
 
-const PORT = Number(process.env.PORT) || 5000;
+// Start DB connection immediately.
+// Mongoose queues commands until the connection is open, so this works
+// both for the local server and for serverless cold starts.
+connectDB().catch((err) => console.error("MongoDB connection failed:", err.message));
 
-const start = async () => {
-  await connectDB();
+// Export for serverless platforms (Vercel api/index.js)
+export default app;
+
+// Local development: listen only when not running on Vercel
+if (!process.env.VERCEL) {
+  const PORT = Number(process.env.PORT) || 5000;
   app.listen(PORT, () => console.log(`🚀 OPULUXE API running on port ${PORT}`));
-};
-
-start();
+}
