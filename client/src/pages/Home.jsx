@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import HeroSlider from "../components/HeroSlider";
+import Gallery from "../components/Gallery";
 import { priceLabel, durationLabel } from "../utils";
 
 const HIGHLIGHTS = [
@@ -87,37 +89,9 @@ export default function Home() {
             </div>
           </div>
 
+          {/* HERO SLIDESHOW */}
           <div className="relative animate-fadeUp">
-            <div className="card overflow-hidden p-8 shadow-soft">
-              <div className="rounded-2xl bg-gradient-to-br from-gold-400/20 via-fuchsia-500/10 to-transparent p-8">
-                <p className="text-[11px] uppercase tracking-[0.3em] text-gold-300/80">
-                  Signature Looks
-                </p>
-                <ul className="mt-6 space-y-4 text-sm">
-                  {[
-                    ["Bone Straight", "K1,000"],
-                    ["Spanish Curl", "K850"],
-                    ["Knotless Small Bum Length", "K750"],
-                    ["Goddess Braids Bum Length", "K650"],
-                    ["Passion Twist Selfie", "K500"],
-                  ].map(([name, price]) => (
-                    <li
-                      key={name}
-                      className="flex items-center justify-between border-b border-white/10 pb-3 last:border-0"
-                    >
-                      <span className="text-white/75">{name}</span>
-                      <span className="font-medium text-gold-300">{price}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to="/book"
-                  className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-white/10 py-3 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:bg-gold-400 hover:text-ink"
-                >
-                  Reserve Your Seat
-                </Link>
-              </div>
-            </div>
+            <HeroSlider />
           </div>
         </div>
       </section>
@@ -125,32 +99,60 @@ export default function Home() {
       {/* ABOUT */}
       <section id="about" className="scroll-mt-24 border-y border-white/10 bg-plum/30 py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="max-w-2xl">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-gold-400/80">Why Opuluxe</p>
-            <h2 className="section-title mt-3">Where your crown gets the royal treatment</h2>
-            <p className="mt-4 text-sm leading-relaxed text-white/50">
-              We are a boutique beauty studio dedicated to protective styling and healthy hair.
-              Every appointment is personal — we listen, advise and deliver a finish that turns
-              heads.
-            </p>
-          </div>
+          <div className="grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-gold-400/80">Why Opuluxe</p>
+              <h2 className="section-title mt-3">Where your crown gets the royal treatment</h2>
+              <p className="mt-4 text-sm leading-relaxed text-white/50">
+                We are a boutique beauty studio dedicated to protective styling and healthy hair.
+                Every appointment is personal — we listen, advise and deliver a finish that turns
+                heads.
+              </p>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {HIGHLIGHTS.map((h, i) => (
-              <div key={h.title} className="card p-6 transition hover:border-gold-400/40">
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold-400/15 font-display text-gold-300">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="text-base font-medium text-white">{h.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/45">{h.text}</p>
+              <div className="mt-12 grid gap-6 sm:grid-cols-2">
+                {HIGHLIGHTS.map((h, i) => (
+                  <div key={h.title} className="card p-6 transition hover:border-gold-400/40">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold-400/15 font-display text-gold-300">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                    <h3 className="text-base font-medium text-white">{h.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/45">{h.text}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Side photo collage */}
+            <div className="relative mx-auto grid w-full max-w-sm grid-cols-2 gap-4">
+              <img
+                src="/gallery/img_8159.jpg"
+                alt="Spring twists styled at OPULUXE"
+                loading="lazy"
+                className="mt-10 aspect-[3/4] w-full rounded-2xl border border-white/10 object-cover"
+              />
+              <img
+                src="/gallery/img_8163.jpg"
+                alt="Passion twists at OPULUXE"
+                loading="lazy"
+                className="aspect-[3/4] w-full rounded-2xl border border-white/10 object-cover"
+              />
+              <img
+                src="/gallery/img_8161.jpg"
+                alt="Fulani cornrows at OPULUXE"
+                loading="lazy"
+                className="col-span-2 aspect-[16/10] w-full rounded-2xl border border-white/10 object-cover"
+              />
+              <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-gold-400/5 blur-2xl" />
+            </div>
           </div>
         </div>
       </section>
 
+      {/* GALLERY */}
+      <Gallery />
+
       {/* SERVICES / PRICE LIST */}
-      <section id="services" className="scroll-mt-24 py-20">
+      <section id="services" className="scroll-mt-24 border-t border-white/10 bg-plum/20 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div>
@@ -223,16 +225,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA with photo strip */}
       <section className="border-y border-white/10 bg-gradient-to-r from-gold-500/10 via-transparent to-fuchsia-500/10 py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
+        <div className="mx-auto max-w-7xl px-6 text-center">
           <h2 className="font-display text-3xl text-white sm:text-4xl">
             Ready to elevate your look?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm text-white/50">
             Pick your style, choose your slot, and we&apos;ll handle the rest. Your seat is waiting.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+
+          {/* Floating photo strip */}
+          <div className="mx-auto mt-12 flex max-w-3xl justify-center gap-4">
+            {["/gallery/img_8166.jpg", "/gallery/img_8160.jpg", "/gallery/img_8168.jpg"].map(
+              (src, i) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt="OPULUXE styles"
+                  loading="lazy"
+                  className={`w-24 rounded-2xl border border-white/10 object-cover shadow-soft transition hover:-translate-y-2 hover:border-gold-400/50 sm:w-32 ${
+                    i % 2 ? "mt-6" : ""
+                  }`}
+                />
+              )
+            )}
+          </div>
+
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
             <Link to="/book" className="btn-gold">
               Book Now
             </Link>

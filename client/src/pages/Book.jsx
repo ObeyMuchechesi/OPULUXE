@@ -347,6 +347,28 @@ export default function Book() {
             </div>
           </aside>
         </form>
+
+        {/* Inspiration strip */}
+        <div className="mt-16">
+          <p className="text-center text-[11px] uppercase tracking-[0.3em] text-gold-400/80">
+            Fresh from our chair
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-4">
+            {["/gallery/img_8165.jpg", "/gallery/img_8162.jpg", "/gallery/img_8167.jpg", "/gallery/img_8158.jpg"].map(
+              (src, i) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt="Styles by OPULUXE"
+                  loading="lazy"
+                  className={`h-36 w-28 rounded-2xl border border-white/10 object-cover transition hover:-translate-y-1.5 hover:border-gold-400/50 sm:h-44 sm:w-36 ${
+                    i % 2 ? "sm:translate-y-4" : ""
+                  }`}
+                />
+              )
+            )}
+          </div>
+        </div>
       </div>
 
       <Footer />
