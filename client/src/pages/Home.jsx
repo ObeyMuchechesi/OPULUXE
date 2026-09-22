@@ -39,11 +39,17 @@ export default function Home() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-gold-500/10 blur-[130px]" />
+      <section className="relative flex min-h-[88vh] items-center overflow-hidden">
+        {/* Full-bleed slideshow background */}
+        <div className="absolute inset-0">
+          <HeroSlider fill />
+        </div>
 
-        <div className="relative mx-auto grid max-w-7xl items-stretch gap-14 max-lg:px-6 max-lg:py-20 lg:grid-cols-2 lg:gap-0 lg:py-0">
-          <div className="animate-fadeUp max-lg:pb-20 lg:py-24 lg:pl-6">
+        {/* Readability scrim (left-heavy) */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/10" />
+
+        <div className="pointer-events-none relative mx-auto w-full max-w-7xl px-6 py-24">
+          <div className="pointer-events-auto max-w-2xl animate-fadeUp">
             <span className="pill border border-gold-400/30 bg-gold-400/10 text-gold-300">
               Lusaka&apos;s Home of Crown Care
             </span>
@@ -86,11 +92,6 @@ export default function Home() {
                 <p className="text-xs uppercase tracking-[0.2em] text-white/40">Satisfaction</p>
               </div>
             </div>
-          </div>
-
-          {/* HERO SLIDESHOW — full-bleed right half on desktop */}
-          <div className="relative animate-fadeUp lg:min-h-[640px]">
-            <HeroSlider fill className="max-lg:rounded-3xl max-lg:border max-lg:border-white/10" />
           </div>
         </div>
       </section>
