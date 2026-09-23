@@ -160,12 +160,9 @@ router.post("/reminders/run", async (req, res) => {
     });
 
     const sent = [];
-    const nowLusaka = new Date(Date.now() + 2 * 3600 * 1000);
-    const nowMin = nowLusaka.getUTCHours() * 60 + nowLusaka.getUTCMinutes();
 
     for (const b of due) {
       const kinds = b.waReminders || [];
-      const startMin = Number(b.time.slice(0, 2)) * 60 + Number(b.time.slice(3, 5));
 
       // Day-before reminder (for tomorrow's bookings, sent when cron runs)
       if (b.date === tomorrow && !kinds.includes("day_before")) {
@@ -179,15 +176,18 @@ router.post("/reminders/run", async (req, res) => {
         });
       }
 
-      // 2-hour-before reminder (for today's bookings still ahead)
-      if (b.date === today && startMin - nowMin <= 120 && startMin - nowMin > -60 && !kinds.includes("2h_before")) {
-        kinds.push("2h_before");
+      // Morning-of reminder for today's appointments. The cron runs once daily,
+      // so rather than pretending to be a precise "2 hours before" message
+      // (which would only fire if the cron happened to run inside that window),
+      // every appointment for today gets exactly one morning reminder.
+      if (b.date === today && !kinds.includes("morning_of")) {
+        kinds.push("morning_of");
         sent.push({
           phone: b.phone,
           booking: b.reference,
-          kind: "2h_before",
+          kind: "morning_of",
           message:
-            `💇‍♀️ See you soon, ${b.customerName.split(" ")[0]}!\n\nYour *${b.serviceName}* at *OPULUXE* starts in about 2 hours — ${prettyTime(b.time)}.\n\nRunning late? Just reply here and let us know 💛`,
+            `💇‍♀️ See you today, ${b.customerName.split(" ")[0]}!\n\nYour *${b.serviceName}* at *OPULUXE* is today at ${prettyTime(b.time)}.\n\nRunning late or need to change it? Just reply here 💛`,
         });
       }
 

@@ -2,30 +2,14 @@ import express from "express";
 import Booking from "../models/Booking.js";
 import Service from "../models/Service.js";
 import { protect } from "../middleware/auth.js";
+import { computeSlots, OPENING_HOUR, CLOSING_HOUR, timeToMin, overlaps } from "../utils/schedule.js";
+import { generateReference } from "../utils/refs.js";
 
 const router = express.Router();
 
-// Studio opening hours (24h). Last slot starts so it ends by CLOSING_HOUR.
-const OPENING_HOUR = 7; // 07:00
-const CLOSING_HOUR = 20; // 20:00 (footer says Mon–Sat 07:00–20:00)
-const SLOT_STEP_MIN = 30;
-
-const REF_PREFIX = "OBS-";
-const generateReference = () => {
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // no ambiguous chars
-  let code = "";
-  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return `${REF_PREFIX}${code}`;
-};
-
-const timeToMin = (t) => {
-  const [h, m] = t.split(":").map(Number);
-  return h * 60 + m;
-};
-const minToTime = (min) =>
-  `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(min % 60).padStart(2, "0")}`;
-
-const overlaps = (aStart, aEnd, bStart, bEnd) => aStart < bEnd && bStart < aEnd;
+const pad2 = (n) => String(n).padStart(2, "0");
+const OPEN_AT = `${pad2(OPENING_HOUR)}:00`;
+const CLOSE_AT = `${pad2(CLOSING_HOUR)}:00`;
 
 // GET /api/bookings/slots?date=YYYY-MM-DD&duration=90 — public slot availability
 // Returns [{ time: "07:30", available: true }, ...] honouring each booking's duration.
@@ -35,32 +19,7 @@ router.get("/slots", async (req, res) => {
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ message: "Valid date (YYYY-MM-DD) is required" });
     }
-    const need = Math.max(15, Number(duration) || 60);
-
-    const dayStart = OPENING_HOUR * 60;
-    const dayEnd = CLOSING_HOUR * 60;
-
-    // Slot start times, aligned to the half hour, ending by closing time
-    const candidates = [];
-    for (let t = dayStart; t + need <= dayEnd; t += SLOT_STEP_MIN) {
-      candidates.push(minToTime(t));
-    }
-
-    const booked = await Booking.find({ date, status: { $ne: "cancelled" } }).select(
-      "time duration -_id"
-    );
-    const blocks = booked.map((b) => {
-      const start = timeToMin(b.time);
-      return [start, start + (Number(b.duration) || 60)];
-    });
-
-    const slots = candidates.map((time) => {
-      const start = timeToMin(time);
-      const end = start + need;
-      const available = !blocks.some(([bs, be]) => overlaps(start, end, bs, be));
-      return { time, available };
-    });
-
+    const slots = await computeSlots(date, duration);
     res.json(slots);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -87,17 +46,18 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Selected service is not available" });
     }
 
-    // Overlap protection: the new appointment must not collide with any
-    // non-cancelled booking on the same date.
+    // Opening-hours + closing-time validation
     const duration = service.duration || 60;
     const newStart = timeToMin(time);
     const newEnd = newStart + duration;
-    if (newEnd > CLOSING_HOUR * 60) {
+    if (newStart < OPENING_HOUR * 60 || newEnd > CLOSING_HOUR * 60) {
       return res.status(409).json({
-        message: "This service would finish after closing time. Please pick an earlier slot.",
+        message: `Appointments must run between ${OPEN_AT} and ${CLOSE_AT}. Please pick a time inside our opening hours.`,
       });
     }
 
+    // Overlap protection: the new appointment must not collide with any
+    // non-cancelled booking on the same date.
     const sameDay = await Booking.find({ date, status: { $ne: "cancelled" } }).select(
       "time duration -_id"
     );
