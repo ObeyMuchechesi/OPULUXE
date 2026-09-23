@@ -24,6 +24,8 @@ const bookingSchema = new mongoose.Schema(
       enum: ["unpaid", "deposit", "paid"],
       default: "unpaid",
     },
+    agentSource: { type: Boolean, default: false }, // booked by the WhatsApp AI agent
+    waReminders: { type: [String], default: [] }, // reminder kinds already sent
   },
   { timestamps: true }
 );

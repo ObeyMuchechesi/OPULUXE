@@ -45,6 +45,9 @@ export default function AdminLayout() {
       <NavLink to="/admin" end className={linkClass} onClick={() => setMenuOpen(false)}>
         <Dot /> Bookings
       </NavLink>
+      <NavLink to="/admin/ai-inbox" className={linkClass} onClick={() => setMenuOpen(false)}>
+        <Dot /> AI Inbox
+      </NavLink>
       <NavLink to="/admin/services" className={linkClass} onClick={() => setMenuOpen(false)}>
         <Dot /> Services
       </NavLink>

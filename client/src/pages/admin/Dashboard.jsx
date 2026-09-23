@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import api from "../../api";
 import {
   money,
@@ -13,9 +13,153 @@ import useSEO from "../../useSEO";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 
+/* ---------- KPI helpers ---------- */
+const pctChip = (v) => ({
+  text: `${v >= 0 ? "▲" : "▼"} ${Math.abs(v)}%`,
+  cls:
+    v > 0
+      ? "text-emerald-300 bg-emerald-400/10 border-emerald-400/25"
+      : v < 0
+      ? "text-rose-300 bg-rose-400/10 border-rose-400/25"
+      : "text-white/40 bg-white/5 border-white/10",
+});
+
+const SPARK = { w: 120, h: 36 };
+
+function Sparkline({ series, pick }) {
+  const vals = series.map(pick);
+  const max = Math.max(...vals, 1);
+  const pts = vals
+    .map((v, i) => `${(i / Math.max(vals.length - 1, 1)) * SPARK.w},${SPARK.h - (v / max) * (SPARK.h - 4) - 2}`)
+    .join(" ");
+  return (
+    <svg viewBox={`0 0 ${SPARK.w} ${SPARK.h}`} className="h-9 w-[120px]" preserveAspectRatio="none">
+      <polyline points={pts} fill="none" stroke="rgb(252 211 77 / 0.9)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const monthLabel = (ym) => {
+  const [, m] = ym.split("-").map(Number);
+  return MONTH_SHORT[m - 1] || ym;
+};
+
+/* ---------- AI Assistant ---------- */
+const SUGGESTIONS = [
+  "How is revenue this month?",
+  "What's pending?",
+  "Who's booked today?",
+  "Free slots tomorrow?",
+  "How many repeat customers?",
+  "Give me a summary",
+];
+
+function Assistant() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: "ai", text: "Hi! I'm your studio assistant 🤖 Ask me anything about your live data — revenue, bookings, customers, availability." },
+  ]);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    boxRef.current?.scrollTo({ top: boxRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, open]);
+
+  const ask = async (question) => {
+    const q = (question ?? input).trim();
+    if (!q || busy) return;
+    setInput("");
+    setMessages((m) => [...m, { role: "you", text: q }]);
+    setBusy(true);
+    try {
+      const { data } = await api.post("/analytics/assistant", { question: q });
+      setMessages((m) => [...m, { role: "ai", text: data.answer }]);
+    } catch {
+      setMessages((m) => [...m, { role: "ai", text: "Sorry — something went wrong fetching that. Try again in a moment." }]);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Floating button */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full border border-gold-400/40 bg-plum shadow-soft transition hover:border-gold-300 hover:scale-105"
+        title="Ask the AI assistant"
+      >
+        {open ? <span className="text-lg text-white/70">✕</span> : <span className="text-xl">🤖</span>}
+      </button>
+
+      {open && (
+        <div className="fixed bottom-24 right-6 z-40 flex max-h-[70vh] w-[min(92vw,380px)] flex-col overflow-hidden rounded-2xl border border-gold-400/25 bg-plum shadow-soft">
+          <div className="border-b border-white/10 bg-gold-400/[0.07] px-4 py-3">
+            <p className="font-display text-sm tracking-[0.15em] text-gold-300">STUDIO ASSISTANT</p>
+            <p className="text-[10px] text-white/40">Answers from your live booking data</p>
+          </div>
+
+          <div ref={boxRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`max-w-[85%] whitespace-pre-wrap rounded-xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                  m.role === "you"
+                    ? "ml-auto bg-gold-400/15 text-gold-100"
+                    : "bg-white/[0.05] text-white/80"
+                }`}
+              >
+                {m.text}
+              </div>
+            ))}
+            {busy && (
+              <div className="flex gap-1 px-2">
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold-300/70" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold-300/70 [animation-delay:120ms]" />
+                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold-300/70 [animation-delay:240ms]" />
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/10 px-3 pb-3 pt-2">
+            <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => ask(s)}
+                  className="shrink-0 rounded-full border border-white/12 px-3 py-1.5 text-[10px] text-white/55 transition hover:border-gold-400/50 hover:text-gold-200"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                className="input !py-2.5 text-xs"
+                placeholder="Ask about your business…"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && ask()}
+              />
+              <button onClick={() => ask()} disabled={busy} className="btn-gold !px-4 !py-2.5 text-xs">
+                Ask
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ---------- Page ---------- */
 export default function Dashboard() {
   useSEO({ title: "Dashboard | OPULUXE Admin", noindex: true });
   const [stats, setStats] = useState(null);
+  const [kpis, setKpis] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,6 +168,7 @@ export default function Dashboard() {
 
   const loadStats = useCallback(() => {
     api.get("/bookings/stats").then((r) => setStats(r.data)).catch(() => {});
+    api.get("/analytics/kpis").then((r) => setKpis(r.data)).catch(() => {});
   }, []);
 
   const loadBookings = useCallback(() => {
@@ -87,6 +232,9 @@ export default function Dashboard() {
     }
   };
 
+  const revDelta = kpis ? pctChip(kpis.revenueDeltaPct) : null;
+  const bkDelta = kpis ? pctChip(kpis.bookingsDeltaPct) : null;
+
   return (
     <div>
       {/* Header */}
@@ -100,7 +248,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Stats */}
+      {/* Core stats */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Total" value={stats?.total ?? "—"} />
         <StatCard label="Today" value={stats?.today ?? "—"} accent />
@@ -109,6 +257,114 @@ export default function Dashboard() {
         <StatCard label="Completed" value={stats?.completed ?? "—"} />
         <StatCard label="Revenue" value={stats ? money(stats.revenue) : "—"} accent />
       </div>
+
+      {/* KPI band */}
+      {kpis && (
+        <div className="mt-6 grid gap-4 lg:grid-cols-3">
+          <div className="card p-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Revenue · this month</p>
+                <p className="mt-2 font-display text-3xl text-gold-300">{money(kpis.revenueThisMonth)}</p>
+              </div>
+              {revDelta && (
+                <span className={`rounded-full border px-2.5 py-1 text-[10px] ${revDelta.cls}`}>{revDelta.text}</span>
+              )}
+            </div>
+            <div className="mt-4 flex items-end justify-between">
+              <p className="text-[11px] text-white/40">
+                Last month {money(kpis.revenueLastMonth)} · avg ticket {money(kpis.avgTicket)}
+              </p>
+              <Sparkline series={kpis.revenueSeries} pick={(s) => s.revenue} />
+            </div>
+          </div>
+
+          <div className="card p-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Bookings · this month</p>
+                <p className="mt-2 font-display text-3xl text-white">{kpis.bookingsThisMonth}</p>
+              </div>
+              {bkDelta && (
+                <span className={`rounded-full border px-2.5 py-1 text-[10px] ${bkDelta.cls}`}>{bkDelta.text}</span>
+              )}
+            </div>
+            <div className="mt-4 flex items-end justify-between">
+              <p className="text-[11px] text-white/40">
+                {kpis.bookingsLastMonth} last month · completion {kpis.completionRate}%
+              </p>
+              <Sparkline series={kpis.revenueSeries} pick={(s) => s.bookings} />
+            </div>
+          </div>
+
+          <div className="card p-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Customers</p>
+            <div className="mt-2 flex items-baseline gap-3">
+              <p className="font-display text-3xl text-white">{kpis.totalCustomers}</p>
+              <p className="text-[11px] text-gold-300/80">
+                {kpis.repeatCustomers} repeat ({kpis.totalCustomers ? Math.round((kpis.repeatCustomers / kpis.totalCustomers) * 100) : 0}%)
+              </p>
+            </div>
+            <p className="mt-3 text-[11px] text-white/40">
+              {kpis.upcoming7} appointments in the next 7 days · {kpis.pending} pending now
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Top services + 6-month trend */}
+      {kpis && (kpis.topServices.length > 0 || kpis.revenueSeries.some((s) => s.bookings > 0)) && (
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <div className="card p-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Top services (completed)</p>
+            <div className="mt-4 space-y-3">
+              {kpis.topServices.length === 0 && <p className="text-xs text-white/30">No completed bookings yet.</p>}
+              {kpis.topServices.map((s, i) => {
+                const max = kpis.topServices[0]?.count || 1;
+                return (
+                  <div key={s.name}>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/75">
+                        {i + 1}. {s.name}
+                      </span>
+                      <span className="text-white/40">
+                        {s.count}× · <span className="text-gold-300/90">{money(s.revenue)}</span>
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-gold-400/80 to-gold-300/40"
+                        style={{ width: `${Math.max((s.count / max) * 100, 6)}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="card p-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Last 6 months</p>
+            <div className="mt-5 flex h-32 items-end gap-3">
+              {kpis.revenueSeries.map((s) => {
+                const max = Math.max(...kpis.revenueSeries.map((x) => x.revenue), 1);
+                return (
+                  <div key={s.month} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="flex w-full flex-1 items-end">
+                      <div
+                        className="w-full rounded-t-lg bg-gradient-to-t from-gold-500/50 to-gold-300/80 transition-all"
+                        style={{ height: `${Math.max((s.revenue / max) * 100, s.revenue > 0 ? 6 : 2)}%` }}
+                        title={`${monthLabel(s.month)}: ${money(s.revenue)} (${s.bookings} bookings)`}
+                      />
+                    </div>
+                    <p className="text-[10px] text-white/35">{monthLabel(s.month)}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="card mt-8 p-5">
@@ -198,7 +454,14 @@ export default function Dashboard() {
                     key={b._id}
                     className="border-b border-white/5 transition last:border-0 hover:bg-white/[0.02]"
                   >
-                    <td className="px-6 py-4 font-mono text-xs text-gold-300">{b.reference}</td>
+                    <td className="px-6 py-4">
+                      <p className="font-mono text-xs text-gold-300">{b.reference}</p>
+                      {b.agentSource && (
+                        <span className="mt-1 inline-block rounded-full border border-purple-400/25 bg-purple-400/10 px-2 py-0.5 text-[9px] uppercase tracking-wider text-purple-300">
+                          AI booking
+                        </span>
+                      )}
+                    </td>
                     <td className="px-6 py-4">
                       <p className="text-white/85">{b.customerName}</p>
                       <p className="text-[11px] text-white/35">{b.phone}</p>
@@ -288,6 +551,10 @@ export default function Dashboard() {
               <Detail label="Duration" value={durationLabel(selected.duration)} />
               <Detail label="Price" value={money(selected.price)} />
               <Detail
+                label="Booked via"
+                value={selected.agentSource ? "WhatsApp AI agent" : "Website"}
+              />
+              <Detail
                 label="Booked on"
                 value={new Date(selected.createdAt).toLocaleString("en-GB")}
               />
@@ -340,10 +607,14 @@ export default function Dashboard() {
 
             <div className="mt-8 flex gap-3">
               <a
-                href={`tel:${selected.phone}`}
+                href={`https://wa.me/${selected.phone.replace(/\D/g, "")}?text=${encodeURIComponent(
+                  `Hello ${selected.customerName.split(" ")[0]}, this is OPULUXE Beauty Studio regarding your booking ${selected.reference} (${selected.serviceName} on ${prettyDate(selected.date)} at ${prettyTime(selected.time)}).`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
                 className="btn-ghost flex-1 !py-3 text-xs"
               >
-                Call Customer
+                WhatsApp Customer
               </a>
               <button
                 onClick={() => remove(selected._id)}
@@ -355,6 +626,8 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      <Assistant />
     </div>
   );
 }

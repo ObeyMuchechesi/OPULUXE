@@ -6,6 +6,8 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import serviceRoutes from "./routes/services.js";
 import bookingRoutes from "./routes/bookings.js";
+import waRoutes from "./routes/wa.js";
+import analyticsRoutes from "./routes/analytics.js";
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.get("/api/health", (req, res) => res.json({ ok: true, service: "opuluxe-api"
 app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/wa", waRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // 404 for unknown API routes
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
