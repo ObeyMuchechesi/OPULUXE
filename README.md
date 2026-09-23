@@ -43,13 +43,17 @@ npm run dev               # ✨ Site on http://localhost:5173
 > client's `VITE_API_URL` default also points there — no extra config needed
 > for local development.
 
-### Default admin login
+### Admin access
 
-| Field    | Value              |
-| -------- | ------------------ |
-| URL      | `/admin/login`     |
-| Email    | `admin@opuluxe.com`|
-| Password | `opuluxe123`       |
+The dashboard lives at **`/admin/login`** (not linked from the public site).
+
+Login credentials are set when you seed the database, via environment
+variables in `server/.env` — they are intentionally **not** documented here:
+
+```
+ADMIN_EMAIL=...        # set before running npm run seed
+ADMIN_PASSWORD=...     # min 6 characters
+```
 
 Change the password from **Admin → Settings** after first login.
 

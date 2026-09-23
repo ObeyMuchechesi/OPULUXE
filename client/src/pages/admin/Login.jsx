@@ -51,7 +51,7 @@ export default function Login() {
               <input
                 type="email"
                 className="input"
-                placeholder="admin@opuluxe.com"
+                placeholder="you@studio.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
@@ -79,10 +79,6 @@ export default function Login() {
               {loading ? "Signing in…" : "Sign In"}
             </button>
           </form>
-
-          <p className="mt-6 text-center text-[11px] text-white/25">
-            Default: admin@opuluxe.com / opuluxe123
-          </p>
         </div>
 
         <p className="mt-8 text-center text-xs text-white/30">
