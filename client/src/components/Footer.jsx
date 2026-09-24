@@ -5,8 +5,18 @@ export default function Footer() {
     <footer id="contact" className="scroll-mt-24 border-t border-white/10 bg-plum/40">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-3">
         <div>
-          <h3 className="font-display text-2xl tracking-[0.15em] text-gold-300">OPULUXE</h3>
-          <p className="mt-1 text-[10px] tracking-[0.4em] text-white/40">BEAUTY STUDIO</p>
+          <div className="flex items-center gap-4">
+            <img
+              src="/logo.png"
+              alt="OPULUXE Beauty Studio logo"
+              loading="lazy"
+              className="h-14 w-14 rounded-full ring-1 ring-gold-400/30"
+            />
+            <div>
+              <h3 className="font-display text-2xl tracking-[0.15em] text-gold-300">OPULUXE</h3>
+              <p className="mt-1 text-[10px] tracking-[0.4em] text-white/40">BEAUTY STUDIO</p>
+            </div>
+          </div>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-white/50">
             Your Beauty Elevated. Expert braiding, styling and hair care — crafted with precision
             and love.

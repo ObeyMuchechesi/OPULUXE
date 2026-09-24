@@ -28,9 +28,20 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/85 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex flex-col leading-none" onClick={() => setOpen(false)}>
-          <span className="font-display text-lg tracking-[0.22em] text-gold-300">OPULUXE</span>
-          <span className="text-[9px] tracking-[0.4em] text-white/40">BEAUTY STUDIO</span>
+        <Link
+          to="/"
+          className="group flex items-center gap-3"
+          onClick={() => setOpen(false)}
+        >
+          <img
+            src="/logo.png"
+            alt="OPULUXE Beauty Studio logo"
+            className="h-11 w-11 rounded-full ring-1 ring-gold-400/40 transition group-hover:ring-gold-300/70"
+          />
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-lg tracking-[0.22em] text-gold-300">OPULUXE</span>
+            <span className="mt-1 text-[9px] tracking-[0.4em] text-white/40">BEAUTY STUDIO</span>
+          </span>
         </Link>
 
         <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">

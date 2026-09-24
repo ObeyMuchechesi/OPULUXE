@@ -36,8 +36,13 @@ export default function Login() {
       <div className="pointer-events-none absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-fuchsia-600/10 blur-[140px]" />
 
       <div className="relative w-full max-w-md">
-        <Link to="/" className="mb-8 block text-center">
-          <p className="font-display text-2xl tracking-[0.25em] text-gold-300">OPULUXE</p>
+        <Link to="/" className="mb-8 flex flex-col items-center">
+          <img
+            src="/logo.png"
+            alt="OPULUXE Beauty Studio logo"
+            className="h-24 w-24 rounded-full shadow-glow ring-1 ring-gold-400/40"
+          />
+          <p className="mt-4 font-display text-2xl tracking-[0.25em] text-gold-300">OPULUXE</p>
           <p className="mt-1 text-[10px] tracking-[0.4em] text-white/40">BEAUTY STUDIO</p>
         </Link>
 

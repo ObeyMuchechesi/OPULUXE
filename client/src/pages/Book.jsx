@@ -106,7 +106,12 @@ export default function Book() {
         <Navbar />
         <div className="mx-auto max-w-2xl px-6 py-20">
           <div className="card animate-fadeUp p-8 text-center sm:p-12">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-400/15 text-3xl">
+            <img
+              src="/logo.png"
+              alt="OPULUXE Beauty Studio logo"
+              className="mx-auto h-20 w-20 rounded-full shadow-glow ring-1 ring-gold-400/40"
+            />
+            <div className="mx-auto mt-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-400/15 text-3xl">
               ✓
             </div>
             <h1 className="mt-6 font-display text-3xl text-white">Booking Confirmed!</h1>

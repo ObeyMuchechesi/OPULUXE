@@ -61,9 +61,16 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-ink lg:flex">
       {/* Sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-plum/40 p-6 lg:flex">
-        <Link to="/" className="mb-10 block">
-          <p className="font-display text-lg tracking-[0.22em] text-gold-300">OPULUXE</p>
-          <p className="mt-1 text-[9px] tracking-[0.35em] text-white/35">BEAUTY STUDIO</p>
+        <Link to="/" className="mb-10 flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt="OPULUXE Beauty Studio logo"
+            className="h-12 w-12 rounded-full ring-1 ring-gold-400/40"
+          />
+          <span>
+            <p className="font-display text-lg tracking-[0.22em] text-gold-300">OPULUXE</p>
+            <p className="mt-1 text-[9px] tracking-[0.35em] text-white/35">BEAUTY STUDIO</p>
+          </span>
         </Link>
 
         <nav className="space-y-1">{links}</nav>
@@ -82,9 +89,16 @@ export default function AdminLayout() {
       {/* Mobile topbar */}
       <div className="flex-1">
         <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink/90 px-5 py-4 backdrop-blur-xl lg:hidden">
-          <Link to="/" className="flex flex-col leading-none">
-            <span className="font-display text-base tracking-[0.2em] text-gold-300">OPULUXE</span>
-            <span className="text-[8px] tracking-[0.35em] text-white/35">BEAUTY STUDIO</span>
+          <Link to="/" className="flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="OPULUXE Beauty Studio logo"
+              className="h-9 w-9 rounded-full ring-1 ring-gold-400/40"
+            />
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-base tracking-[0.2em] text-gold-300">OPULUXE</span>
+              <span className="mt-0.5 text-[8px] tracking-[0.35em] text-white/35">BEAUTY STUDIO</span>
+            </span>
           </Link>
           <button
             onClick={() => setMenuOpen((m) => !m)}
